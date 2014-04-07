@@ -1,0 +1,47 @@
+#!/bin/sh
+
+export PREFIX=$(cat /proc/sys/kernel/hostname)
+export OUTFILE=$(mktemp /tmp/grapini_XXXXXX)
+# by default all plugins in PLUGIN_DIR will be executed
+export PLUGIN_DIR=/usr/lib/graphini/plugins/
+export TIMESTAMP=$(date +%s)
+
+GRAPHITE_HOST="127.0.0.1"
+GRAPHITE_PORT="2003"
+DEBUG=no
+
+# for plugin function defined here add your plugin_XXX here
+INLINE_PLUGINS="system"
+
+plugin_system() {
+	local prefix="${PREFIX}.system"
+
+	echo ${prefix}.uptime $(cat /proc/uptime | cut -d. -f1) $TIMESTAMP
+	echo ${prefix}.load.1m $(cat /proc/loadavg | cut -d ' ' -f1) $TIMESTAMP
+	echo ${prefix}.load.5m $(cat /proc/loadavg | cut -d ' ' -f2) $TIMESTAMP
+	echo ${prefix}.load.15m $(cat /proc/loadavg | cut -d ' ' -f3) $TIMESTAMP
+	awk -v prefix=${prefix}.meminfo -v timestamp=$TIMESTAMP '{ print prefix "." $1 " " $2 " " timestamp }' /proc/meminfo
+}
+
+log() {
+	if [ "$DEBUG" == "yes" ] ; then
+		echo $@ >&2
+	fi
+}
+
+for plugin in $INLINE_PLUGINS; do
+	log "execute $plugin"
+	eval plugin_$plugin >> $OUTFILE
+done
+
+if [ -d "$PLUGIN_DIR" ] ; then
+	for plugin in $(ls "$PLUGIN_DIR/") ; do 
+		${PLUGIN_DIR}/${plugin} >> $OUTFILE
+	done
+fi
+
+cat $OUTFILE | nc $GRAPHITE_HOST $GRAPHITE_PORT
+RET=$?
+
+rm $OUTFILE
+exit $?
