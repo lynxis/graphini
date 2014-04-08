@@ -1,10 +1,11 @@
 BEGIN {
-	simple_keys["rxbytes"]
-	simple_keys["rxpackets"]
-	simple_keys["txbytes"]
-	simple_keys["txpackets"]
-	simple_keys["txretries"]
-	simple_keys["txfailed"]
+	keys["rxbytes"]
+	keys["rxpackets"]
+	keys["txbytes"]
+	keys["txpackets"]
+	keys["txretries"]
+	keys["txfailed"]
+	keys["signal"]
 }
 {
 	if (NF == 1) {
@@ -22,14 +23,14 @@ BEGIN {
 	white = index(key, " ")
 	if (white > 0) key = substr(key, 1, white - 1) substr(key, white + 1)
 
-	if (key in simple_keys) {
-		print prefix "." key " " value " " timestamp
+	if (!(key in keys)) {
 		next
 	}
+
 	if (key == "signal") {
 		n=split(value,array," ")
 		value = array[1]
-		print prefix "." key " " value " " timestamp
-		next
 	}
+
+	print prefix "." mac "."  key " " value " " timestamp
 }
