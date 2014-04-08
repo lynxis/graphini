@@ -1,5 +1,6 @@
 # What is graphini
 A collector and reporter for [graphite](http://graphite.readthedocs.org/en/latest/overview.html).
+Similar to muninlite for munin is grapini for graphite.
 It's written in plain sh, because it (must) runs on openWrt.
 
 # How to install
