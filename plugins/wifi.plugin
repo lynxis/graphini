@@ -10,6 +10,6 @@ fi
 for phy in $(ls /sys/class/ieee80211/) ; do
 	for dev in $(ls /sys/class/ieee80211/$phy/device/net/${wlan0}) ; do
 		echo "starting $dev"
-		iw $dev station dump | awk -v timestamp="$TIMESTAMP" -v prefix="$PREFIX" -v FS='\t' -f wifi.awk
+		iw $dev station dump | awk -v timestamp="$TIMESTAMP" -v prefix="$PREFIX" -v FS='\t' -f "$(dirname $0)/wifi.awk"
 	done
 done
