@@ -35,7 +35,7 @@ for plugin in $INLINE_PLUGINS; do
 done
 
 if [ -d "$PLUGIN_DIR" ] ; then
-	for plugin in $(ls "$PLUGIN_DIR/") ; do 
+	for plugin in $(ls "$PLUGIN_DIR/*.plugin") ; do 
 		${PLUGIN_DIR}/${plugin} >> $OUTFILE
 	done
 fi
