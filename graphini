@@ -6,8 +6,8 @@ export OUTFILE=$(mktemp /tmp/grapini_XXXXXX)
 export PLUGIN_DIR=/usr/lib/graphini/plugins/
 export TIMESTAMP=$(date +%s)
 
-GRAPHITE_HOST="127.0.0.1"
-GRAPHITE_PORT="2003"
+CARBON_HOST="127.0.0.1"
+CARBON_PORT="2003"
 DEBUG=no
 
 # for plugin function defined here add your plugin_XXX here
@@ -42,7 +42,7 @@ if [ -d "$PLUGIN_DIR" ] ; then
 	done
 fi
 
-cat $OUTFILE | nc $GRAPHITE_HOST $GRAPHITE_PORT
+cat $OUTFILE | nc $CARBON_HOST $CARBON_PORT
 RET=$?
 
 if [ "$DEBUG" != "yes" ] ; then
