@@ -30,13 +30,15 @@ log() {
 }
 
 for plugin in $INLINE_PLUGINS; do
-	log "execute $plugin"
+	log "executing inline $plugin"
 	eval plugin_$plugin >> $OUTFILE
 done
 
 if [ -d "$PLUGIN_DIR" ] ; then
-	for plugin in $(ls "$PLUGIN_DIR/*.plugin") ; do 
-		${PLUGIN_DIR}/${plugin} >> $OUTFILE
+	log "plugin dir exists scanning for *.plugin files"
+	for plugin in $(ls "$PLUGIN_DIR"/*.plugin) ; do
+		log "executing $plugin"
+		${plugin} >> $OUTFILE
 	done
 fi
 
