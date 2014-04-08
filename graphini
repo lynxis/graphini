@@ -43,5 +43,8 @@ fi
 cat $OUTFILE | nc $GRAPHITE_HOST $GRAPHITE_PORT
 RET=$?
 
-rm $OUTFILE
+if [ "$DEBUG" != "yes" ] ; then
+	rm $OUTFILE
+fi
+
 exit $?
