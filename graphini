@@ -1,14 +1,16 @@
 #!/bin/sh
 
+### Config BEGIN
+CARBON_HOST="127.0.0.1"
+CARBON_PORT="2003"
+DEBUG=no
+### Config END
+
 export PREFIX=$(cat /proc/sys/kernel/hostname)
 export OUTFILE=$(mktemp /tmp/grapini_XXXXXX)
 # by default all plugins in PLUGIN_DIR will be executed
 export PLUGIN_DIR=/usr/lib/graphini/plugins/
 export TIMESTAMP=$(date +%s)
-
-CARBON_HOST="127.0.0.1"
-CARBON_PORT="2003"
-DEBUG=no
 
 # for plugin function defined here add your plugin_XXX here
 INLINE_PLUGINS="system"
