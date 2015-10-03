@@ -1,0 +1,19 @@
+#!/bin/sh
+
+if [ -z "$TIMESTAMP" ] ; then
+	TIMESTAMP=44444444
+fi
+if [ -z "$PREFIX" ] ; then
+	PREFIX=FOO
+fi
+
+for dev in $(ls /sys/class/net/) ; do
+	if [ ! -d "/sys/class/net/$dev/statistics" ] ; then
+		continue
+	fi
+
+	for prop in $(ls /sys/class/net/${dev}/statistics/") ; do
+		VALUE="$(cat /sys/class/net/${dev}/statistics/${prop})"
+		echo "${PREFIX}.${dev}.${prop} ${VALUE} $TIMESTAMP"
+	done
+done
