@@ -1,0 +1,89 @@
+#!/bin/sh
+
+. /usr/share/libubox/jshn.sh
+
+get_reset_key() {
+	{ grep "^$1:" | awk -F: '{ print $2 }' ; } <<EOF
+    Baseband Hang:baseband_hang
+Baseband Watchdog:baseband_watchdog
+   Fatal HW Error:fatal_hw_error
+      TX HW error:tx_hw_error
+ Transmit timeout:transmit_timeout
+     TX Path Hang:tx_path_hang
+      PLL RX Hang:pll_rx_hang
+         MAC Hang:mac_hang
+     Stuck Beacon:stuck_beacon
+        MCI Reset:mci_reset
+Calibration error:calibration_error
+Tx DMA stop error:tx_dma_stop
+Rx DMA stop error:rx_dma_stop
+EOF
+}
+
+get_dfs_key() {
+	{ grep "^$1:" | awk -F: '{ print $2 }' ; } <<EOF
+pulse events reported :pulse_events
+invalid pulse events :pulse_invalid
+DFS pulses detected :pulse_dfs
+Datalen discards :datalen_discards
+RSSI discards :rssi_discards
+BW info discards :bw_info_discards
+Primary channel pulses channel_primary_pulses
+Secondary channel pulses :channel_secondary_pulses
+Dual channel pulses :channel_dual_pulses
+Pulse events processed :pulse_events_processed
+Radars detected :radar_detected
+Pool references :pool_references
+Pulses allocated :pulses_allocated
+Pulses alloc error :pulses_alloc_error
+Pulses in use :pulses_in_use
+Seqs. allocated :seqs_allocated
+Seqs. alloc error :seqs_allocated_error
+Seqs. in use :seqs_in_use
+EOF
+}
+
+if [ -z "$TIMESTAMP" ] ; then
+	TIMESTAMP=44444444
+fi
+if [ -z "$PREFIX" ] ; then
+	PREFIX=FOO
+fi
+
+for phy in $(ls /sys/kernel/debug/ieee80211/) ; do
+	if [ ! -e /sys/kernel/debug/ieee80211/$phy/ath9k/reset ] ; then
+		# not an ath9k device
+		continue
+	fi
+
+	cat /sys/kernel/debug/ieee80211/$phy/ath9k/reset | while read line ; do
+		value="$(echo $line | awk -F: '{ print $2 }' | awk '{ print $1 }')"
+		old_key="$(echo $line | awk -F: '{ print $1 }')"
+		new_key="$(get_reset_key "$old_key")"
+
+		if [ -z "$new_key" ] ; then
+			continue
+		fi
+
+		echo "${PREFIX}.ath9k.$phy.reset.$new_key $value $TIMESTAMP"
+	done
+done
+
+for phy in $(ls /sys/kernel/debug/ieee80211/) ; do
+	if [ ! -e /sys/kernel/debug/ieee80211/$phy/ath9k/dfs_stats ] ; then
+		# not an ath9k device
+		continue
+	fi
+
+	cat /sys/kernel/debug/ieee80211/$phy/ath9k/dfs_stats | while read line ; do
+		value="$(echo $line | awk -F: '{ print $2 }' | awk '{ print $1 }')"
+		old_key="$(echo $line | awk -F: '{ print $1 }')"
+		new_key="$(get_dfs_key "$old_key")"
+
+		if [ -z "$new_key" ] ; then
+			continue
+		fi
+
+		echo "${PREFIX}.ath9k.$phy.dfs.$new_key $value $TIMESTAMP"
+	done
+done
