@@ -50,7 +50,7 @@ if [ -z "$PREFIX" ] ; then
 	PREFIX=FOO
 fi
 
-for phy in $(ls /sys/kernel/debug/ieee80211/) ; do
+for phy in $(ls /sys/kernel/debug/ieee80211/ 2>/dev/null) ; do
 	if [ ! -e /sys/kernel/debug/ieee80211/$phy/ath9k/reset ] ; then
 		# not an ath9k device
 		continue
@@ -69,7 +69,7 @@ for phy in $(ls /sys/kernel/debug/ieee80211/) ; do
 	done
 done
 
-for phy in $(ls /sys/kernel/debug/ieee80211/) ; do
+for phy in $(ls /sys/kernel/debug/ieee80211/ 2>/dev/null) ; do
 	if [ ! -e /sys/kernel/debug/ieee80211/$phy/ath9k/dfs_stats ] ; then
 		# not an ath9k device
 		continue
