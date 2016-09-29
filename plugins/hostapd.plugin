@@ -9,8 +9,8 @@ if [ -z "$PREFIX" ] ; then
 	PREFIX=FOO
 fi
 
-for phy in $(ls /sys/class/ieee80211/) ; do
-	for dev in $(ls /sys/class/ieee80211/$phy/device/net/) ; do
+for phy in $(ls /sys/class/ieee80211/ 2>/dev/null) ; do
+	for dev in $(ls /sys/class/ieee80211/$phy/device/net/ 2>/dev/null) ; do
 		CLIENTS="$(ubus call hostapd.$dev get_clients 2>/dev/null)"
 		# { "freq": 2452,"clients": { "e8:50:8b:12:34:56": { [...] } } }
 
