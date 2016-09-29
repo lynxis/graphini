@@ -7,12 +7,12 @@ if [ -z "$PREFIX" ] ; then
 	PREFIX=FOO
 fi
 
-for dev in $(ls /sys/class/net/) ; do
+for dev in $(ls /sys/class/net/ 2>/dev/null) ; do
 	if [ ! -d "/sys/class/net/$dev/statistics" ] ; then
 		continue
 	fi
 
-	for prop in $(ls /sys/class/net/${dev}/statistics/") ; do
+	for prop in $(ls "/sys/class/net/${dev}/statistics/" 2>/dev/null) ; do
 		VALUE="$(cat /sys/class/net/${dev}/statistics/${prop})"
 		echo "${PREFIX}.${dev}.${prop} ${VALUE} $TIMESTAMP"
 	done
