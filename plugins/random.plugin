@@ -1,0 +1,12 @@
+#!/bin/sh
+
+. /usr/share/libubox/jshn.sh
+
+if [ -z "$TIMESTAMP" ] ; then
+	TIMESTAMP=44444444
+fi
+if [ -z "$PREFIX" ] ; then
+	PREFIX=FOO
+fi
+
+echo "${PREFIX}.system.entropy_avail $(cat /proc/sys/kernel/random/entropy_avail) $value $TIMESTAMP"
