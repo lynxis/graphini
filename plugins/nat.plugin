@@ -1,0 +1,16 @@
+#!/bin/sh
+
+if [ -z "$TIMESTAMP" ] ; then
+	TIMESTAMP=44444444
+fi
+if [ -z "$PREFIX" ] ; then
+	PREFIX=FOO
+fi
+
+if [ ! -e /proc/sys/net/netfilter/nf_conntrack_count ] ; then
+  logger -s "/proc/sys/net/netfilter/nf_conntrack_count doesnt exist"
+  exit 0
+fi
+
+echo "${PREFIX}.netfilter.conntrack.count $(cat /proc/sys/net/netfilter/nf_conntrack_count) $TIMESTAMP"
+echo "${PREFIX}.netfilter.conntrack.max $(cat /proc/sys/net/netfilter/nf_conntrack_max) $TIMESTAMP"
