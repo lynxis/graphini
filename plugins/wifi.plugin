@@ -8,8 +8,11 @@ if [ -z "$PREFIX" ] ; then
 fi
 
 for phy in $(ls /sys/class/ieee80211/ 2>/dev/null) ; do
+	OLD_PREFIX=$PREFIX
+	PREFIX="$OLD_PREFIX.clients"
 	for dev in $(ls /sys/class/ieee80211/$phy/device/net/ 2>/dev/null) ; do
 		iw $dev station dump | awk -v timestamp="$TIMESTAMP" -v prefix="${PREFIX}.wifi" -v FS='\t' -f "$(dirname $0)/wifi_stations.awk"
 	done
+	PREFIX="$OLD_PREFIX.survey"
 	iw wlan0 survey dump | awk -v timestamp="$TIMESTAMP" -v prefix="${PREFIX}.wifi" -v FS='\t' -f "$(dirname $0)/wifi_survey.awk"
 done
